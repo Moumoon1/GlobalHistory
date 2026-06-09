@@ -48,15 +48,15 @@ function getMaxVisibleLabelRank(labelTier: number): number {
 }
 
 function getTextureLabelFont(labelRank: number): string {
-  if (labelRank <= 2) return "700 24px Arial, sans-serif";
-  if (labelRank <= 4) return "700 19px Arial, sans-serif";
-  return "700 15px Arial, sans-serif";
+  if (labelRank <= 2) return "600 12px Arial, sans-serif";
+  if (labelRank <= 4) return "600 10px Arial, sans-serif";
+  return "600 8px Arial, sans-serif";
 }
 
 function getTextureLabelYAdjust(labelRank: number): number {
-  if (labelRank <= 2) return 8;
-  if (labelRank <= 4) return 6;
-  return 5;
+  if (labelRank <= 2) return 4;
+  if (labelRank <= 4) return 3;
+  return 2;
 }
 
 function boxesOverlap(
@@ -106,12 +106,12 @@ function createLabelTexture(labels: CountryLabel[]): string | null {
 
     context.font = getTextureLabelFont(label.labelRank);
     const textWidth = context.measureText(label.name).width;
-    const textHeight = label.labelRank <= 2 ? 30 : label.labelRank <= 4 ? 24 : 18;
+    const textHeight = label.labelRank <= 2 ? 15 : label.labelRank <= 4 ? 13 : 10;
     const box = {
-      x: x - textWidth / 2 - 10,
-      y: y - textHeight / 2 - 5,
-      width: textWidth + 20,
-      height: textHeight + 10
+      x: x - textWidth / 2 - 4,
+      y: y - textHeight / 2 - 2,
+      width: textWidth + 8,
+      height: textHeight + 4
     };
 
     if (occupiedBoxes.some((occupiedBox) => boxesOverlap(box, occupiedBox))) {
@@ -119,10 +119,7 @@ function createLabelTexture(labels: CountryLabel[]): string | null {
     }
 
     occupiedBoxes.push(box);
-    context.lineWidth = label.labelRank <= 2 ? 5 : 4;
-    context.strokeStyle = "rgba(255, 250, 240, 0.86)";
-    context.fillStyle = "rgba(31, 41, 51, 0.9)";
-    context.strokeText(label.name, x, y);
+    context.fillStyle = "rgba(55, 52, 45, 0.74)";
     context.fillText(label.name, x, y);
   });
 

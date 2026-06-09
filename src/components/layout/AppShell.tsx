@@ -10,8 +10,7 @@ export function AppShell() {
   const {
     selectedPeriodId,
     selectedRegionId,
-    activeCategories,
-    activeRegionTypes
+    activeCategories
   } = useHistoryStore();
 
   const allRegions = useMemo(
@@ -22,10 +21,9 @@ export function AppShell() {
   const visibleRegions = useMemo(
     () =>
       filterRegions(allRegions, {
-        activeCategories,
-        activeRegionTypes
+        activeCategories
       }),
-    [activeCategories, activeRegionTypes, allRegions]
+    [activeCategories, allRegions]
   );
 
   const selectedRegion =

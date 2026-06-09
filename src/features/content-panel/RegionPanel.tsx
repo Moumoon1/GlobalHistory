@@ -32,15 +32,31 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
           <p className="text-sm font-semibold text-[#6d604d]">{periodLabel}</p>
           <h2 className="mt-1 text-3xl font-bold">{region.modernName}</h2>
         </div>
-        <span
-          className="mt-1 h-5 w-5 shrink-0 rounded-full border border-black/10"
-          style={{ background: region.color }}
-        />
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="rounded-full bg-[#eef3df] px-2 py-1 text-xs font-bold text-[#5d6b3c]">
+            {region.importance}
+          </span>
+          <span
+            className="h-5 w-5 rounded-full border border-black/10"
+            style={{ background: region.color }}
+          />
+        </div>
       </div>
 
       <p className="mt-5 rounded-lg bg-white px-4 py-4 text-sm leading-6 text-[#514838] shadow-sm">
         {region.summary}
       </p>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {region.themes.map((theme) => (
+          <span
+            key={theme}
+            className="rounded-full border border-[#e3d6bd] bg-white px-3 py-1 text-xs font-semibold text-[#6d604d]"
+          >
+            {theme}
+          </span>
+        ))}
+      </div>
 
       <section className="mt-7">
         <h3 className="text-base font-bold">当时归属</h3>
@@ -85,7 +101,12 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
                   {event.category}
                 </span>
               </div>
-              <h4 className="mt-2 font-semibold">{event.title}</h4>
+              <div className="mt-2 flex items-start justify-between gap-3">
+                <h4 className="font-semibold">{event.title}</h4>
+                <span className="shrink-0 rounded-full bg-[#f5efe2] px-2 py-1 text-xs font-bold text-[#8a6d3b]">
+                  {event.importance}
+                </span>
+              </div>
               <p className="mt-2 text-sm leading-6 text-[#6d604d]">
                 {event.description}
               </p>
@@ -105,6 +126,23 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
               <strong>{person.name}</strong>
               <span className="ml-2 text-[#7a6a50]">{person.role}</span>
             </span>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-7">
+        <h3 className="text-base font-bold">跨区域联系</h3>
+        <div className="mt-3 space-y-3">
+          {region.connections.map((connection) => (
+            <article
+              key={connection.title}
+              className="rounded-lg border border-[#e3d6bd] bg-white p-4 shadow-sm"
+            >
+              <h4 className="font-semibold">{connection.title}</h4>
+              <p className="mt-2 text-sm leading-6 text-[#6d604d]">
+                {connection.description}
+              </p>
+            </article>
           ))}
         </div>
       </section>

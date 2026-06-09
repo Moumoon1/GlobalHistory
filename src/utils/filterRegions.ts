@@ -2,7 +2,6 @@ import type { HistoricalRegion } from "../types/history";
 
 type RegionFilters = {
   activeCategories: string[];
-  activeRegionTypes: string[];
 };
 
 export function filterRegions(
@@ -10,14 +9,11 @@ export function filterRegions(
   filters: RegionFilters
 ): HistoricalRegion[] {
   return regions.filter((region) => {
-    const matchesType =
-      filters.activeRegionTypes.length === 0 ||
-      filters.activeRegionTypes.includes(region.type);
-
     const matchesCategory =
       filters.activeCategories.length === 0 ||
+      region.themes.some((theme) => filters.activeCategories.includes(theme)) ||
       region.events.some((event) => filters.activeCategories.includes(event.category));
 
-    return matchesType && matchesCategory;
+    return matchesCategory;
   });
 }

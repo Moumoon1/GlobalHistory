@@ -1,5 +1,3 @@
-import type { Feature, Polygon, MultiPolygon } from "geojson";
-
 export type EventCategory =
   | "政治"
   | "战争"
@@ -9,13 +7,9 @@ export type EventCategory =
   | "贸易"
   | "殖民";
 
-export type RegionType =
-  | "empire"
-  | "kingdom"
-  | "state"
-  | "colony"
-  | "region"
-  | "civilization";
+export type ImportanceLevel = "S" | "A" | "B" | "C";
+
+export type RegionType = "modern-area" | "macro-region";
 
 export type Period = {
   id: string;
@@ -28,6 +22,7 @@ export type HistoryEvent = {
   year: number;
   title: string;
   category: EventCategory;
+  importance: ImportanceLevel;
   description: string;
 };
 
@@ -55,10 +50,9 @@ export type Source = {
   url: string;
 };
 
-export type RegionFeatureProperties = {
-  regionId: string;
-  name: string;
-  color: string;
+export type GlobalConnection = {
+  title: string;
+  description: string;
 };
 
 export type HistoricalRegion = {
@@ -73,11 +67,13 @@ export type HistoricalRegion = {
     lng: number;
   };
   countryNames?: string[];
-  geometry: Feature<Polygon | MultiPolygon, RegionFeatureProperties>["geometry"];
+  themes: EventCategory[];
+  importance: ImportanceLevel;
   summary: string;
   historicalStatuses: HistoricalStatus[];
   events: HistoryEvent[];
   people: HistoricalPerson[];
+  connections: GlobalConnection[];
   images: HistoryImage[];
   sources: Source[];
 };

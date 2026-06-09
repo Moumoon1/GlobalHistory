@@ -11,8 +11,9 @@ export const regions1500To1550: HistoricalRegion[] = [
   {
     id: "ming-1500-1550",
     periodId: "1500-1550",
-    name: "明朝",
-    type: "empire",
+    name: "中国",
+    modernName: "中国",
+    type: "region",
     color: "#f3a6a6",
     labelPosition: { lat: 34, lng: 108 },
     countryNames: ["China"],
@@ -25,7 +26,24 @@ export const regions1500To1550: HistoricalRegion[] = [
       [120, 23],
       [110, 20]
     ]),
-    summary: "明朝处于中后期，中央财政、边防与海上贸易压力逐渐显现。",
+    summary: "现代中国区域在这一时期大部分处于明朝统治下，北方草原、西北和边疆地带同时存在蒙古诸部、吐鲁番等区域势力活动。",
+    historicalStatuses: [
+      {
+        name: "明朝",
+        type: "政权",
+        territoryNote: "控制中原、江南、华南、西南大部以及主要农业区，是这一时期中国区域的主体政权。"
+      },
+      {
+        name: "蒙古诸部",
+        type: "区域势力",
+        territoryNote: "活跃于长城以北草原地带，并持续对明朝北部边防构成压力。"
+      },
+      {
+        name: "吐鲁番等西域势力",
+        type: "区域势力",
+        territoryNote: "西北部分地区并不等同于明朝内地治理结构，存在多种地方势力和交通网络。"
+      }
+    ],
     events: [
       {
         year: 1506,
@@ -65,8 +83,9 @@ export const regions1500To1550: HistoricalRegion[] = [
   {
     id: "ottoman-1500-1550",
     periodId: "1500-1550",
-    name: "奥斯曼帝国",
-    type: "empire",
+    name: "土耳其及东地中海",
+    modernName: "土耳其及东地中海",
+    type: "region",
     color: "#f7c267",
     labelPosition: { lat: 39, lng: 32 },
     countryNames: [
@@ -91,7 +110,20 @@ export const regions1500To1550: HistoricalRegion[] = [
       [34, 29],
       [27, 34]
     ]),
-    summary: "奥斯曼帝国快速扩张，成为连接东地中海、巴尔干和中东的强权。",
+    summary: "现代土耳其及周边东地中海区域在这一时期以奥斯曼帝国为核心，奥斯曼势力向巴尔干、中东和北非快速扩张。",
+    historicalStatuses: [
+      {
+        name: "奥斯曼帝国",
+        type: "政权",
+        territoryNote: "以安纳托利亚和巴尔干为核心，并在 1517 年后控制埃及、叙利亚等重要区域。"
+      },
+      {
+        name: "马穆鲁克苏丹国",
+        type: "政权",
+        endYear: 1517,
+        territoryNote: "1517 年前控制埃及和叙利亚，随后被奥斯曼征服。"
+      }
+    ],
     events: [
       {
         year: 1517,
@@ -130,8 +162,9 @@ export const regions1500To1550: HistoricalRegion[] = [
   {
     id: "spain-1500-1550",
     periodId: "1500-1550",
-    name: "西班牙王国",
-    type: "kingdom",
+    name: "西班牙",
+    modernName: "西班牙",
+    type: "region",
     color: "#f5dd7a",
     labelPosition: { lat: 40, lng: -4 },
     countryNames: ["Spain"],
@@ -143,7 +176,19 @@ export const regions1500To1550: HistoricalRegion[] = [
       [1.2, 37.2],
       [-4.5, 36.0]
     ]),
-    summary: "西班牙完成国家整合后，迅速成为大航海和美洲殖民的核心力量。",
+    summary: "现代西班牙区域在这一时期属于西班牙王权体系，并迅速成为大航海、海外征服和美洲殖民扩张的重要中心。",
+    historicalStatuses: [
+      {
+        name: "西班牙王国",
+        type: "政权",
+        territoryNote: "伊比利亚半岛上的核心王权，和哈布斯堡帝国体系、海外殖民扩张紧密相连。"
+      },
+      {
+        name: "西班牙殖民势力",
+        type: "殖民势力",
+        territoryNote: "这一时期开始在美洲快速扩张，影响范围超过现代西班牙本土。"
+      }
+    ],
     events: [
       {
         year: 1519,
@@ -183,8 +228,9 @@ export const regions1500To1550: HistoricalRegion[] = [
   {
     id: "aztec-1500-1550",
     periodId: "1500-1550",
-    name: "阿兹特克帝国",
-    type: "empire",
+    name: "墨西哥",
+    modernName: "墨西哥",
+    type: "region",
     color: "#93d5a4",
     labelPosition: { lat: 19, lng: -99 },
     countryNames: ["Mexico"],
@@ -196,7 +242,21 @@ export const regions1500To1550: HistoricalRegion[] = [
       [-95, 17],
       [-99, 14.5]
     ]),
-    summary: "阿兹特克帝国在十六世纪初仍是中美洲强权，但很快遭遇西班牙入侵。",
+    summary: "现代墨西哥中部在十六世纪初以阿兹特克帝国为核心，1521 年后逐步被西班牙殖民体系取代。",
+    historicalStatuses: [
+      {
+        name: "阿兹特克帝国",
+        type: "政权",
+        endYear: 1521,
+        territoryNote: "主要控制中美洲高原核心区域，首都为特诺奇蒂特兰。"
+      },
+      {
+        name: "新西班牙早期殖民统治",
+        type: "殖民势力",
+        startYear: 1521,
+        territoryNote: "西班牙征服后逐步建立殖民统治，改变当地政治与社会结构。"
+      }
+    ],
     events: [
       {
         year: 1502,
@@ -235,8 +295,9 @@ export const regions1500To1550: HistoricalRegion[] = [
   {
     id: "mughal-1500-1550",
     periodId: "1500-1550",
-    name: "莫卧儿帝国",
-    type: "empire",
+    name: "印度次大陆",
+    modernName: "印度次大陆",
+    type: "region",
     color: "#c8a8f2",
     labelPosition: { lat: 27, lng: 78 },
     countryNames: ["India", "Pakistan", "Bangladesh"],
@@ -249,7 +310,26 @@ export const regions1500To1550: HistoricalRegion[] = [
       [82, 21],
       [76, 20]
     ]),
-    summary: "莫卧儿帝国在十六世纪前期建立，逐渐成为南亚北部的重要政权。",
+    summary: "现代印度、巴基斯坦、孟加拉国所在的南亚区域在这一时期多政权并存，北印度在 1526 年后出现莫卧儿帝国，南部仍有其他强大政权。",
+    historicalStatuses: [
+      {
+        name: "德里苏丹国晚期",
+        type: "政权",
+        endYear: 1526,
+        territoryNote: "1526 年前仍是北印度重要政权之一，随后在帕尼帕特战役中被巴布尔击败。"
+      },
+      {
+        name: "莫卧儿帝国",
+        type: "政权",
+        startYear: 1526,
+        territoryNote: "首先在北印度建立统治，之后逐渐扩张为南亚重要帝国。"
+      },
+      {
+        name: "毗奢耶那伽罗王国等南印度政权",
+        type: "多政权并存",
+        territoryNote: "南印度并不属于早期莫卧儿统治范围，仍有独立而强大的区域政权。"
+      }
+    ],
     events: [
       {
         year: 1526,
@@ -282,8 +362,9 @@ export const regions1500To1550: HistoricalRegion[] = [
   {
     id: "portugal-1500-1550",
     periodId: "1500-1550",
-    name: "葡萄牙王国",
-    type: "kingdom",
+    name: "葡萄牙",
+    modernName: "葡萄牙",
+    type: "region",
     color: "#8fd3d1",
     labelPosition: { lat: 39, lng: -8 },
     countryNames: ["Portugal"],
@@ -293,7 +374,19 @@ export const regions1500To1550: HistoricalRegion[] = [
       [-6.4, 41.8],
       [-6.2, 37.1]
     ]),
-    summary: "葡萄牙沿非洲、印度洋和东亚扩展海上贸易网络。",
+    summary: "现代葡萄牙区域在这一时期是葡萄牙王国核心本土，同时也是向非洲、印度洋、巴西和东亚扩张的海上帝国起点。",
+    historicalStatuses: [
+      {
+        name: "葡萄牙王国",
+        type: "政权",
+        territoryNote: "伊比利亚半岛西部的王国，也是早期欧洲海外扩张的重要发起者。"
+      },
+      {
+        name: "葡萄牙海上贸易与殖民网络",
+        type: "殖民势力",
+        territoryNote: "势力范围沿非洲海岸、印度洋、巴西和东亚据点展开，远超本土边界。"
+      }
+    ],
     events: [
       {
         year: 1500,

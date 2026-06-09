@@ -1,4 +1,4 @@
-import { eventCategories, regionTypes } from "../../data/categories";
+import { eventCategories } from "../../data/categories";
 import { periods } from "../../data/periods";
 import { useHistoryStore } from "../../stores/useHistoryStore";
 import type { HistoricalRegion } from "../../types/history";
@@ -12,11 +12,9 @@ export function FilterSidebar({ regions }: FilterSidebarProps) {
     selectedPeriodId,
     selectedRegionId,
     activeCategories,
-    activeRegionTypes,
     setSelectedPeriodId,
     setSelectedRegionId,
     toggleCategory,
-    toggleRegionType,
     clearFilters
   } = useHistoryStore();
 
@@ -76,29 +74,6 @@ export function FilterSidebar({ regions }: FilterSidebarProps) {
                 }`}
               >
                 {category}
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      <section>
-        <h3 className="text-sm font-semibold">区域类型</h3>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          {regionTypes.map((regionType) => {
-            const active = activeRegionTypes.includes(regionType.value);
-            return (
-              <button
-                key={regionType.value}
-                type="button"
-                onClick={() => toggleRegionType(regionType.value)}
-                className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
-                  active
-                    ? "border-[#8c6245] bg-[#f5d6bd] text-[#633d26]"
-                    : "border-[#d6c7aa] bg-white text-[#6d604d] hover:border-[#c6a98f]"
-                }`}
-              >
-                {regionType.label}
               </button>
             );
           })}

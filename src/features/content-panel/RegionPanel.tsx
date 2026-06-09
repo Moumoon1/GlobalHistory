@@ -18,7 +18,7 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
           </p>
           <h2 className="mt-3 text-2xl font-bold">选择一个区域</h2>
           <p className="mt-3 text-sm leading-6 text-[#6d604d]">
-            点击地球上的历史区域后，这里会显示重要事件、关键人物和插图。
+            点击现代地图区域后，这里会显示该地区在当前时间段的历史归属、重要事件、关键人物和插图。
           </p>
         </div>
       </aside>
@@ -30,7 +30,7 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold text-[#6d604d]">{periodLabel}</p>
-          <h2 className="mt-1 text-3xl font-bold">{region.name}</h2>
+          <h2 className="mt-1 text-3xl font-bold">{region.modernName}</h2>
         </div>
         <span
           className="mt-1 h-5 w-5 shrink-0 rounded-full border border-black/10"
@@ -41,6 +41,35 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
       <p className="mt-5 rounded-lg bg-white px-4 py-4 text-sm leading-6 text-[#514838] shadow-sm">
         {region.summary}
       </p>
+
+      <section className="mt-7">
+        <h3 className="text-base font-bold">当时归属</h3>
+        <div className="mt-3 space-y-3">
+          {region.historicalStatuses.map((status) => (
+            <article
+              key={`${status.name}-${status.type}`}
+              className="rounded-lg border border-[#e3d6bd] bg-white p-4 shadow-sm"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <h4 className="font-semibold">{status.name}</h4>
+                <span className="shrink-0 rounded-full bg-[#edf4f1] px-2 py-1 text-xs font-semibold text-[#426c63]">
+                  {status.type}
+                </span>
+              </div>
+              {(status.startYear || status.endYear) && (
+                <p className="mt-2 text-xs font-semibold text-[#8a7a61]">
+                  {status.startYear ? `${status.startYear} 起` : ""}
+                  {status.startYear && status.endYear ? " · " : ""}
+                  {status.endYear ? `${status.endYear} 止` : ""}
+                </p>
+              )}
+              <p className="mt-2 text-sm leading-6 text-[#6d604d]">
+                {status.territoryNote}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-7">
         <h3 className="text-base font-bold">重要事件</h3>

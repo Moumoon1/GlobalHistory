@@ -36,6 +36,14 @@ export type HistoricalPerson = {
   role: string;
 };
 
+export type HistoricalStatus = {
+  name: string;
+  type: "政权" | "文明圈" | "殖民势力" | "区域势力" | "多政权并存";
+  territoryNote: string;
+  startYear?: number;
+  endYear?: number;
+};
+
 export type HistoryImage = {
   url: string;
   caption: string;
@@ -57,6 +65,7 @@ export type HistoricalRegion = {
   id: string;
   periodId: string;
   name: string;
+  modernName: string;
   type: RegionType;
   color: string;
   labelPosition: {
@@ -66,6 +75,7 @@ export type HistoricalRegion = {
   countryNames?: string[];
   geometry: Feature<Polygon | MultiPolygon, RegionFeatureProperties>["geometry"];
   summary: string;
+  historicalStatuses: HistoricalStatus[];
   events: HistoryEvent[];
   people: HistoricalPerson[];
   images: HistoryImage[];

@@ -51,6 +51,8 @@ Recommended database table: `history_events`
 | `category` | Politics, war, culture, technology, religion, trade, or colonization. |
 | `importance` | Event importance: `S`, `A`, `B`, or `C`. |
 | `description` | Short explanation in original wording. |
+| `people` | Optional key people attached to this specific event. |
+| `images` | Optional images attached to this specific event. |
 
 ## Connections
 
@@ -64,6 +66,6 @@ Recommended database table: `global_connections`
 | `title` | Connection title. |
 | `description` | Explanation of cross-region relevance. |
 
-## Sources and media
+## Sources and Media
 
-Sources and images are currently attached directly to each profile. Later they can be normalized into `sources`, `profile_sources`, and `profile_images` tables.
+Sources are currently attached directly to each profile. Images can be attached to a specific event, with profile-level images kept only as a compatibility fallback for older data. Later this can be normalized into `sources`, `profile_sources`, `event_images`, and optional `profile_images` tables.

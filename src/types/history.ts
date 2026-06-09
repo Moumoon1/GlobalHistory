@@ -25,6 +25,7 @@ export type HistoryEvent = {
   importance: ImportanceLevel;
   description: string;
   people?: HistoricalPerson[];
+  images?: HistoryImage[];
 };
 
 export type HistoricalPerson = {

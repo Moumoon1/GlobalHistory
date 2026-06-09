@@ -1,5 +1,9 @@
 import { periods } from "../../data/periods";
-import type { HistoricalPerson, HistoricalRegion } from "../../types/history";
+import type {
+  HistoricalPerson,
+  HistoricalRegion,
+  HistoryImage
+} from "../../types/history";
 
 type RegionPanelProps = {
   region: HistoricalRegion | null;
@@ -11,6 +15,8 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
 
   const eventPeopleFallback = (people: HistoricalPerson[], eventIndex: number) =>
     eventIndex === 0 ? people : [];
+  const eventImageFallback = (images: HistoryImage[], eventIndex: number) =>
+    eventIndex === 0 ? images : [];
 
   if (!region) {
     return (
@@ -89,38 +95,64 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
         <h3 className="text-base font-bold">重要事件</h3>
         <div className="mt-3 space-y-3">
           {region.events.map((event, eventIndex) => {
-            const eventPeople = event.people ?? eventPeopleFallback(region.people, eventIndex);
+            const eventPeople =
+              event.people ?? eventPeopleFallback(region.people, eventIndex);
+            const eventImages =
+              event.images ?? eventImageFallback(region.images, eventIndex);
 
             return (
-            <article
-              key={`${event.year}-${event.title}`}
-              className="rounded-lg border border-[#e3d6bd] bg-white p-4 shadow-sm"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-lg font-bold text-[#385c55]">{event.year}</p>
-                <span className="rounded-full bg-[#eef3df] px-2 py-1 text-xs font-semibold text-[#5d6b3c]">
-                  {event.category}
-                </span>
-              </div>
-              <h4 className="mt-2 font-semibold">{event.title}</h4>
-              <p className="mt-2 text-sm leading-6 text-[#6d604d]">
-                {event.description}
-              </p>
-
-              {eventPeople.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {eventPeople.map((person) => (
-                    <span
-                      key={`${event.title}-${person.name}`}
-                      className="rounded-lg border border-[#efe4cd] bg-[#fffaf0] px-2 py-1 text-xs text-[#6d604d]"
-                    >
-                      <strong className="text-ink">{person.name}</strong>
-                      <span className="ml-1">{person.role}</span>
-                    </span>
-                  ))}
+              <article
+                key={`${event.year}-${event.title}`}
+                className="rounded-lg border border-[#e3d6bd] bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-lg font-bold text-[#385c55]">
+                    {event.year}
+                  </p>
+                  <span className="rounded-full bg-[#eef3df] px-2 py-1 text-xs font-semibold text-[#5d6b3c]">
+                    {event.category}
+                  </span>
                 </div>
-              )}
-            </article>
+                <h4 className="mt-2 font-semibold">{event.title}</h4>
+                <p className="mt-2 text-sm leading-6 text-[#6d604d]">
+                  {event.description}
+                </p>
+
+                {eventImages.length > 0 && (
+                  <div className="mt-3 grid gap-3">
+                    {eventImages.map((image) => (
+                      <figure
+                        key={`${event.title}-${image.url}`}
+                        className="overflow-hidden rounded-lg border border-[#efe4cd] bg-[#fffaf0]"
+                      >
+                        <img
+                          src={image.url}
+                          alt={image.caption}
+                          className="h-36 w-full object-cover"
+                          loading="lazy"
+                        />
+                        <figcaption className="px-3 py-2 text-xs leading-5 text-[#6d604d]">
+                          {image.caption} · {image.source}
+                        </figcaption>
+                      </figure>
+                    ))}
+                  </div>
+                )}
+
+                {eventPeople.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {eventPeople.map((person) => (
+                      <span
+                        key={`${event.title}-${person.name}`}
+                        className="rounded-lg border border-[#efe4cd] bg-[#fffaf0] px-2 py-1 text-xs text-[#6d604d]"
+                      >
+                        <strong className="text-ink">{person.name}</strong>
+                        <span className="ml-1">{person.role}</span>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </article>
             );
           })}
         </div>
@@ -139,28 +171,6 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
                 {connection.description}
               </p>
             </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-7">
-        <h3 className="text-base font-bold">插图</h3>
-        <div className="mt-3 grid gap-3">
-          {region.images.map((image) => (
-            <figure
-              key={image.url}
-              className="overflow-hidden rounded-lg border border-[#e3d6bd] bg-white shadow-sm"
-            >
-              <img
-                src={image.url}
-                alt={image.caption}
-                className="h-44 w-full object-cover"
-                loading="lazy"
-              />
-              <figcaption className="px-3 py-2 text-xs text-[#6d604d]">
-                {image.caption} · {image.source}
-              </figcaption>
-            </figure>
           ))}
         </div>
       </section>

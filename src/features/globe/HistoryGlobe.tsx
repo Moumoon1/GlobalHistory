@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Globe from "react-globe.gl";
-import { MeshBasicMaterial } from "three";
 import type { HistoricalRegion } from "../../types/history";
 import { useHistoryStore } from "../../stores/useHistoryStore";
 
@@ -46,6 +45,88 @@ function getMaxVisibleLabelRank(labelTier: number): number {
   if (labelTier === 1) return 3;
   if (labelTier === 2) return 5;
   return 99;
+}
+
+function getTextureLabelFont(labelRank: number): string {
+  if (labelRank <= 2) return "700 24px Arial, sans-serif";
+  if (labelRank <= 4) return "700 19px Arial, sans-serif";
+  return "700 15px Arial, sans-serif";
+}
+
+function getTextureLabelYAdjust(labelRank: number): number {
+  if (labelRank <= 2) return 8;
+  if (labelRank <= 4) return 6;
+  return 5;
+}
+
+function boxesOverlap(
+  first: { x: number; y: number; width: number; height: number },
+  second: { x: number; y: number; width: number; height: number }
+): boolean {
+  return !(
+    first.x + first.width < second.x ||
+    second.x + second.width < first.x ||
+    first.y + first.height < second.y ||
+    second.y + second.height < first.y
+  );
+}
+
+function createLabelTexture(labels: CountryLabel[]): string | null {
+  if (typeof document === "undefined") return null;
+
+  const width = 2048;
+  const height = 1024;
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const context = canvas.getContext("2d");
+  if (!context) return null;
+
+  context.fillStyle = "#76cfe8";
+  context.fillRect(0, 0, width, height);
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+
+  const occupiedBoxes: Array<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }> = [];
+  const sortedLabels = [...labels].sort(
+    (first, second) => first.labelRank - second.labelRank
+  );
+
+  sortedLabels.forEach((label) => {
+    const x = ((label.lng + 180) / 360) * width;
+    const y =
+      ((90 - label.lat) / 180) * height +
+      getTextureLabelYAdjust(label.labelRank);
+
+    context.font = getTextureLabelFont(label.labelRank);
+    const textWidth = context.measureText(label.name).width;
+    const textHeight = label.labelRank <= 2 ? 30 : label.labelRank <= 4 ? 24 : 18;
+    const box = {
+      x: x - textWidth / 2 - 10,
+      y: y - textHeight / 2 - 5,
+      width: textWidth + 20,
+      height: textHeight + 10
+    };
+
+    if (occupiedBoxes.some((occupiedBox) => boxesOverlap(box, occupiedBox))) {
+      return;
+    }
+
+    occupiedBoxes.push(box);
+    context.lineWidth = label.labelRank <= 2 ? 5 : 4;
+    context.strokeStyle = "rgba(255, 250, 240, 0.86)";
+    context.fillStyle = "rgba(31, 41, 51, 0.9)";
+    context.strokeText(label.name, x, y);
+    context.fillText(label.name, x, y);
+  });
+
+  return canvas.toDataURL("image/png");
 }
 
 function pointInRing(lng: number, lat: number, ring: number[][]): boolean {
@@ -140,14 +221,6 @@ export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
   const { hoveredRegionId, setHoveredRegionId, setSelectedRegionId } =
     useHistoryStore();
 
-  const globeMaterial = useMemo(
-    () =>
-      new MeshBasicMaterial({
-        color: "#76cfe8"
-      }),
-    []
-  );
-
   const regionByCountry = useMemo(() => {
     const nextMap = new Map<string, HistoricalRegion>();
 
@@ -180,6 +253,11 @@ export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
         lng: land.labelPosition.lng
       }));
   }, [labelTier, landPolygons, regionByCountry]);
+
+  const labelTextureUrl = useMemo(
+    () => createLabelTexture(countryLabels),
+    [countryLabels]
+  );
 
   const findRegionAtCoordinate = (lng: number, lat: number) => {
     const land = landPolygons.find((polygon) =>
@@ -266,7 +344,7 @@ export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
       width={window.innerWidth - 660}
       height={window.innerHeight}
       backgroundColor="rgba(185, 231, 244, 1)"
-      globeMaterial={globeMaterial}
+      globeImageUrl={labelTextureUrl ?? undefined}
       showAtmosphere={false}
       polygonsData={landPolygons}
       polygonGeoJsonGeometry={(polygon: object) =>
@@ -275,10 +353,10 @@ export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
       polygonCapColor={(polygon: object) => {
         const land = polygon as LandPolygon;
         const region = regionByCountry.get(land.name);
-        if (!region) return "rgba(216, 230, 166, 0.82)";
-        if (selectedRegion?.id === region.id) return region.color;
-        if (hoveredRegionId === region.id) return `${region.color}dd`;
-        return `${region.color}b8`;
+        if (!region) return "rgba(216, 230, 166, 0.72)";
+        if (selectedRegion?.id === region.id) return `${region.color}cc`;
+        if (hoveredRegionId === region.id) return `${region.color}c2`;
+        return `${region.color}a8`;
       }}
       polygonSideColor={(polygon: object) => {
         const land = polygon as LandPolygon;
@@ -328,20 +406,6 @@ export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
           currentLabelTier === nextLabelTier ? currentLabelTier : nextLabelTier
         );
       }}
-      labelsData={countryLabels}
-      labelLat={(label: object) => (label as CountryLabel).lat}
-      labelLng={(label: object) => (label as CountryLabel).lng}
-      labelText={(label: object) => (label as CountryLabel).name}
-      labelColor={() => "rgba(31, 41, 51, 0.82)"}
-      labelAltitude={0.012}
-      labelSize={(label: object) => {
-        const rank = (label as CountryLabel).labelRank;
-        if (rank <= 2) return 0.9;
-        if (rank <= 4) return 0.72;
-        return 0.58;
-      }}
-      labelDotRadius={0}
-      labelResolution={2}
     />
   );
 }

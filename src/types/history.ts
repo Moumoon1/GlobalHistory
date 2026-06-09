@@ -24,6 +24,7 @@ export type HistoryEvent = {
   category: EventCategory;
   importance: ImportanceLevel;
   description: string;
+  people?: HistoricalPerson[];
 };
 
 export type HistoricalPerson = {

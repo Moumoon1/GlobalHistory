@@ -1,5 +1,5 @@
 import { periods } from "../../data/periods";
-import type { HistoricalRegion } from "../../types/history";
+import type { HistoricalPerson, HistoricalRegion } from "../../types/history";
 
 type RegionPanelProps = {
   region: HistoricalRegion | null;
@@ -8,6 +8,9 @@ type RegionPanelProps = {
 
 export function RegionPanel({ region, periodId }: RegionPanelProps) {
   const periodLabel = periods.find((period) => period.id === periodId)?.label;
+
+  const eventPeopleFallback = (people: HistoricalPerson[], eventIndex: number) =>
+    eventIndex === 0 ? people : [];
 
   if (!region) {
     return (
@@ -32,15 +35,10 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
           <p className="text-sm font-semibold text-[#6d604d]">{periodLabel}</p>
           <h2 className="mt-1 text-3xl font-bold">{region.modernName}</h2>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <span className="rounded-full bg-[#eef3df] px-2 py-1 text-xs font-bold text-[#5d6b3c]">
-            {region.importance}
-          </span>
-          <span
-            className="h-5 w-5 rounded-full border border-black/10"
-            style={{ background: region.color }}
-          />
-        </div>
+        <span
+          className="mt-1 h-5 w-5 shrink-0 rounded-full border border-black/10"
+          style={{ background: region.color }}
+        />
       </div>
 
       <p className="mt-5 rounded-lg bg-white px-4 py-4 text-sm leading-6 text-[#514838] shadow-sm">
@@ -90,7 +88,10 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
       <section className="mt-7">
         <h3 className="text-base font-bold">重要事件</h3>
         <div className="mt-3 space-y-3">
-          {region.events.map((event) => (
+          {region.events.map((event, eventIndex) => {
+            const eventPeople = event.people ?? eventPeopleFallback(region.people, eventIndex);
+
+            return (
             <article
               key={`${event.year}-${event.title}`}
               className="rounded-lg border border-[#e3d6bd] bg-white p-4 shadow-sm"
@@ -101,32 +102,27 @@ export function RegionPanel({ region, periodId }: RegionPanelProps) {
                   {event.category}
                 </span>
               </div>
-              <div className="mt-2 flex items-start justify-between gap-3">
-                <h4 className="font-semibold">{event.title}</h4>
-                <span className="shrink-0 rounded-full bg-[#f5efe2] px-2 py-1 text-xs font-bold text-[#8a6d3b]">
-                  {event.importance}
-                </span>
-              </div>
+              <h4 className="mt-2 font-semibold">{event.title}</h4>
               <p className="mt-2 text-sm leading-6 text-[#6d604d]">
                 {event.description}
               </p>
-            </article>
-          ))}
-        </div>
-      </section>
 
-      <section className="mt-7">
-        <h3 className="text-base font-bold">关键人物</h3>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {region.people.map((person) => (
-            <span
-              key={person.name}
-              className="rounded-lg border border-[#e3d6bd] bg-white px-3 py-2 text-sm shadow-sm"
-            >
-              <strong>{person.name}</strong>
-              <span className="ml-2 text-[#7a6a50]">{person.role}</span>
-            </span>
-          ))}
+              {eventPeople.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {eventPeople.map((person) => (
+                    <span
+                      key={`${event.title}-${person.name}`}
+                      className="rounded-lg border border-[#efe4cd] bg-[#fffaf0] px-2 py-1 text-xs text-[#6d604d]"
+                    >
+                      <strong className="text-ink">{person.name}</strong>
+                      <span className="ml-1">{person.role}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </article>
+            );
+          })}
         </div>
       </section>
 

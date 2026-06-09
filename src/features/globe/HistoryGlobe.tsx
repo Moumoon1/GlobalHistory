@@ -167,6 +167,7 @@ export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
       .filter(
         (land) =>
           land.name !== "Antarctica" &&
+          regionByCountry.has(land.name) &&
           land.labelRank <= maxVisibleLabelRank &&
           Number.isFinite(land.labelPosition.lat) &&
           Number.isFinite(land.labelPosition.lng)
@@ -178,7 +179,7 @@ export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
         lat: land.labelPosition.lat,
         lng: land.labelPosition.lng
       }));
-  }, [labelTier, landPolygons]);
+  }, [labelTier, landPolygons, regionByCountry]);
 
   const findRegionAtCoordinate = (lng: number, lat: number) => {
     const land = landPolygons.find((polygon) =>

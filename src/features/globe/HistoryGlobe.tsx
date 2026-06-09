@@ -14,6 +14,11 @@ type LandPolygon = {
   kind: "land";
   name: string;
   geometry: unknown;
+  labelRank: number;
+  labelPosition: {
+    lat: number;
+    lng: number;
+  };
 };
 
 type GlobeClickCoords = {
@@ -21,10 +26,36 @@ type GlobeClickCoords = {
   lng: number;
 };
 
+type CountryLabel = {
+  id: string;
+  name: string;
+  labelRank: number;
+  lat: number;
+  lng: number;
+};
+
+function getLabelTier(altitude: number): number {
+  if (altitude > 2) return 0;
+  if (altitude > 1.35) return 1;
+  if (altitude > 0.9) return 2;
+  return 3;
+}
+
+function getMaxVisibleLabelRank(labelTier: number): number {
+  if (labelTier === 0) return 2;
+  if (labelTier === 1) return 3;
+  if (labelTier === 2) return 5;
+  return 99;
+}
+
 function pointInRing(lng: number, lat: number, ring: number[][]): boolean {
   let inside = false;
 
-  for (let index = 0, previousIndex = ring.length - 1; index < ring.length; previousIndex = index++) {
+  for (
+    let index = 0, previousIndex = ring.length - 1;
+    index < ring.length;
+    previousIndex = index++
+  ) {
     const [currentLng, currentLat] = ring[index];
     const [previousLng, previousLat] = ring[previousIndex];
     const intersects =
@@ -61,10 +92,51 @@ function geometryContainsPoint(geometry: unknown, lng: number, lat: number): boo
   return false;
 }
 
+function collectPositions(geometry: unknown): number[][] {
+  const typedGeometry = geometry as {
+    type?: string;
+    coordinates?: number[][][] | number[][][][];
+  };
+
+  if (!typedGeometry.coordinates) return [];
+
+  if (typedGeometry.type === "Polygon") {
+    return typedGeometry.coordinates[0] as number[][];
+  }
+
+  if (typedGeometry.type === "MultiPolygon") {
+    return (typedGeometry.coordinates as number[][][][]).flatMap(
+      (polygon) => polygon[0]
+    );
+  }
+
+  return [];
+}
+
+function getApproximateLabelPosition(geometry: unknown): { lat: number; lng: number } {
+  const positions = collectPositions(geometry);
+
+  if (positions.length === 0) return { lat: 0, lng: 0 };
+
+  const sum = positions.reduce(
+    (total, [lng, lat]) => ({
+      lat: total.lat + lat,
+      lng: total.lng + lng
+    }),
+    { lat: 0, lng: 0 }
+  );
+
+  return {
+    lat: sum.lat / positions.length,
+    lng: sum.lng / positions.length
+  };
+}
+
 export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
   const globeRef = useRef<any>(null);
   const hoveredSelectableRegionRef = useRef<HistoricalRegion | null>(null);
   const [landPolygons, setLandPolygons] = useState<LandPolygon[]>([]);
+  const [labelTier, setLabelTier] = useState(0);
   const { hoveredRegionId, setHoveredRegionId, setSelectedRegionId } =
     useHistoryStore();
 
@@ -88,6 +160,26 @@ export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
     return nextMap;
   }, [regions]);
 
+  const countryLabels = useMemo<CountryLabel[]>(() => {
+    const maxVisibleLabelRank = getMaxVisibleLabelRank(labelTier);
+
+    return landPolygons
+      .filter(
+        (land) =>
+          land.name !== "Antarctica" &&
+          land.labelRank <= maxVisibleLabelRank &&
+          Number.isFinite(land.labelPosition.lat) &&
+          Number.isFinite(land.labelPosition.lng)
+      )
+      .map((land) => ({
+        id: land.id,
+        name: land.name,
+        labelRank: land.labelRank,
+        lat: land.labelPosition.lat,
+        lng: land.labelPosition.lng
+      }));
+  }, [labelTier, landPolygons]);
+
   const findRegionAtCoordinate = (lng: number, lat: number) => {
     const land = landPolygons.find((polygon) =>
       geometryContainsPoint(polygon.geometry, lng, lat)
@@ -105,12 +197,26 @@ export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
           : [];
 
         setLandPolygons(
-          features.map((feature: { geometry: unknown; properties?: { ADMIN?: string; NAME?: string } }, index: number) => ({
-            id: `land-${index}`,
-            kind: "land" as const,
-            name: feature.properties?.ADMIN ?? feature.properties?.NAME ?? "",
-            geometry: feature.geometry
-          }))
+          features.map(
+            (
+              feature: {
+                geometry: unknown;
+                properties?: {
+                  ADMIN?: string;
+                  LABELRANK?: number;
+                  NAME?: string;
+                };
+              },
+              index: number
+            ) => ({
+              id: `land-${index}`,
+              kind: "land" as const,
+              name: feature.properties?.ADMIN ?? feature.properties?.NAME ?? "",
+              geometry: feature.geometry,
+              labelRank: feature.properties?.LABELRANK ?? 99,
+              labelPosition: getApproximateLabelPosition(feature.geometry)
+            })
+          )
         );
       })
       .catch(() => setLandPolygons([]));
@@ -213,6 +319,28 @@ export function HistoryGlobe({ regions, selectedRegion }: HistoryGlobeProps) {
         const region = findRegionAtCoordinate(typedCoords.lng, typedCoords.lat);
         if (region) setSelectedRegionId(region.id);
       }}
+      onZoom={(pointOfView: object) => {
+        const altitude = (pointOfView as { altitude?: number }).altitude ?? 2.25;
+        const nextLabelTier = getLabelTier(altitude);
+
+        setLabelTier((currentLabelTier) =>
+          currentLabelTier === nextLabelTier ? currentLabelTier : nextLabelTier
+        );
+      }}
+      labelsData={countryLabels}
+      labelLat={(label: object) => (label as CountryLabel).lat}
+      labelLng={(label: object) => (label as CountryLabel).lng}
+      labelText={(label: object) => (label as CountryLabel).name}
+      labelColor={() => "rgba(31, 41, 51, 0.82)"}
+      labelAltitude={0.012}
+      labelSize={(label: object) => {
+        const rank = (label as CountryLabel).labelRank;
+        if (rank <= 2) return 0.9;
+        if (rank <= 4) return 0.72;
+        return 0.58;
+      }}
+      labelDotRadius={0}
+      labelResolution={2}
     />
   );
 }

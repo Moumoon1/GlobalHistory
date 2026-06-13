@@ -1,46 +1,100 @@
-<img width="2538" height="1294" alt="e144a9d912d92f08bde1eb3487240f5b" src="https://github.com/user-attachments/assets/a04c0145-1674-48ee-b474-8efa80dd4c16" />
+<img width="2538" height="1294" alt="History Globe preview" src="https://github.com/user-attachments/assets/a04c0145-1674-48ee-b474-8efa80dd4c16" />
+
 # History Globe
 
-一个用于浏览同一时间段世界各地历史格局的桌面端 Web MVP。
+History Globe is a personal history-learning web app for seeing what was happening in different parts of the world during the same time period. It uses modern map boundaries as clickable anchors, then explains the historical entities, events, people, and context for the selected area in the right-hand panel.
 
-## 技术栈
+The current product direction is a study tool rather than a strict historical-border simulator. Historical boundary mismatches are handled as content notes in the selected region, not by redrawing every historical border.
+
+## Current Experience
+
+- Left sidebar: time-period selector, event-category filters, and region list.
+- Center panel: auto-rotating 3D globe with softly colored modern map regions.
+- Globe labels: Chinese region labels rendered as an overlay for stable typography.
+- Region selection: click or hover map regions to focus related historical content.
+- Right panel: selected-region summary, historical status, key events, people inside event cards, illustrations, cross-region links, and sources.
+- Timeline scope: deep-history periods through 2026, with denser cards for documented historical periods.
+
+The public-facing UI no longer includes the data quality-check panel. The audit code is still kept in the repo for development and curation work.
+
+## Tech Stack
 
 - Vite + React + TypeScript
 - Tailwind CSS
 - react-globe.gl + Three.js
 - Zustand
-- 静态 TypeScript 数据，后续可替换为 JSON、API 或数据库
+- Local JSON/TypeScript data with SQLite import/build scripts for future database use
 
-## 运行
+## Run Locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-## 当前范围
+Vite will print a local URL, usually `http://127.0.0.1:5173/` unless another port is already in use.
 
-- 左侧筛选栏：时间段、事件类型、现代区域列表
-- 中间卡通地球：自动旋转、现代地图区域着色、点击选中
-- 右侧内容区：现代区域简介、当时归属、重要事件、关键人物、跨区域联系、插图、来源
-- 时间段结构：1500-1550 到 2000-2026
+Production build:
 
-## 数据模型
+```bash
+npm run build
+```
 
-当前版本使用静态 TypeScript 数据，但结构已经按后续 JSON/API/数据库迁移来设计：
+## Data Status
 
-- 现代地图区域作为点击入口
-- 每个区域在每个时间段有一份历史档案
-- 档案包含当时归属、重要事件、关键人物、跨区域联系、来源和图片
+The app currently combines hand-authored map-region fixtures with generated learning cards.
 
-详见 [docs/data-model.md](docs/data-model.md)。
+- First-pass rough import: completed for all 44 chapters of the working source outline.
+- Second-pass close reading and richer card curation: completed through Chapter 8.
+- Next chapter to process: Chapter 9, `第九章 中世纪文明使欧亚大陆实现整体化`.
+- Current generated card count: 357.
+- Current generated SQLite size: about 1.0 MB.
+- Current generated JSON size: about 732 KB.
 
-## 后续扩展路径
+Second-pass curation files live in `data/curation/`.
 
-当前数据层集中在 `src/data`，UI 层集中在 `src/features`。后续可以逐步替换为：
+Generated outputs such as `data/generated/`, extracted source text under `data/sources/`, and build artifacts are intentionally ignored by Git. This keeps the repository focused on code, schema, scripts, and curated data rather than generated or source-material dumps.
 
-- 静态 JSON/GeoJSON 文件
-- Node API
-- SQLite/Postgres 数据库
-- 在线内容编辑器
-- 自动导入 Wikidata/Wikipedia 候选数据
+## Project Structure
+
+```text
+src/
+  components/layout/        App shell and render boundary
+  features/globe/           3D globe, map regions, labels, hover/click logic
+  features/filters/         Sidebar filters and data summary
+  features/content-panel/   Region/event/detail panels
+  data/                     Frontend data adapters and map-country matching
+  stores/                   Zustand state
+  types/                    Shared TypeScript models
+
+data/curation/              Reviewed learning-card JSON files
+database/schema.sql         SQLite schema
+scripts/                    Import, merge, audit, and build utilities
+docs/                       Data model, source strategy, workflow, progress
+```
+
+## Data Workflow
+
+Typical curation loop:
+
+```bash
+npm run cards:build:v2
+npm run db:import:cards -- ../../outputs/global-history-learning-cards-v2.json
+npm run cards:audit
+npm run build
+```
+
+Notes:
+
+- Use modern country boundaries for click targets.
+- Put historical-boundary differences into `territoryComparison` only when the source content supports it.
+- Keep important people inside the relevant event card.
+- Do not display S/A/B/C importance ratings in the frontend.
+- Prefer one primary map target for a card instead of placing the same card across every mentioned region.
+
+More details:
+
+- [Data model](docs/data-model.md)
+- [Data sources](docs/data-sources.md)
+- [Curation workflow](docs/curation-workflow.md)
+- [Progress](docs/progress.md)

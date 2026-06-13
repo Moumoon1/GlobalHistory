@@ -1,3 +1,4 @@
+<img width="2538" height="1294" alt="e144a9d912d92f08bde1eb3487240f5b" src="https://github.com/user-attachments/assets/a04c0145-1674-48ee-b474-8efa80dd4c16" />
 # History Globe
 
 一个用于浏览同一时间段世界各地历史格局的桌面端 Web MVP。

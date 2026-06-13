@@ -5,12 +5,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: "#1f2933",
-        parchment: "#fbf5e7",
-        ocean: "#9dd7f0"
+        accent: "#ff385c",
+        canvas: "#f6f7fb",
+        elevated: "#ffffff",
+        ink: "#222222",
+        line: "#e8e8e8",
+        muted: "#717171",
+        ocean: "#dbe7ee",
+        panel: "#ffffff",
+        parchment: "#ffffff",
+        rosewash: "#fff1f4",
+        surface: "#f1f3f6",
+        surfaceHover: "#e9edf2"
       },
       boxShadow: {
-        panel: "0 18px 60px rgba(31, 41, 51, 0.14)"
+        panel: "0 12px 34px rgba(34, 34, 34, 0.09)",
+        soft: "0 4px 16px rgba(34, 34, 34, 0.08)"
       }
     }
   },

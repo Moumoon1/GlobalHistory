@@ -2,6 +2,7 @@ import { eventCategories } from "../../data/categories";
 import { periods } from "../../data/periods";
 import { useHistoryStore } from "../../stores/useHistoryStore";
 import type { HistoricalRegion } from "../../types/history";
+import { DatabasePreview } from "./DatabasePreview";
 
 type FilterSidebarProps = {
   regions: HistoricalRegion[];
@@ -19,14 +20,12 @@ export function FilterSidebar({ regions }: FilterSidebarProps) {
   } = useHistoryStore();
 
   return (
-    <aside className="flex h-screen flex-col gap-6 overflow-y-auto bg-parchment px-5 py-6">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7a6a50]">
-          Controls
-        </p>
-        <h2 className="mt-2 text-2xl font-bold">世界历史地图</h2>
-        <p className="mt-2 text-sm leading-6 text-[#6d604d]">
-          选择一个时间段，再点击地球上的区域查看同期历史内容。
+    <aside className="flex h-screen flex-col gap-6 overflow-y-auto bg-canvas px-5 py-5">
+      <div className="rounded-lg bg-elevated px-4 py-4 shadow-soft">
+        <p className="text-xs font-bold text-accent">Global History</p>
+        <h2 className="mt-2 text-2xl font-semibold tracking-normal">世界历史地图</h2>
+        <p className="mt-2 text-sm leading-6 text-muted">
+          按时间和地区浏览同一时期的历史内容。
         </p>
       </div>
 
@@ -34,18 +33,21 @@ export function FilterSidebar({ regions }: FilterSidebarProps) {
         <label className="text-sm font-semibold text-ink" htmlFor="period">
           时间段
         </label>
-        <select
-          id="period"
-          className="mt-3 w-full rounded-lg border border-[#cdbd9f] bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-[#6d8f86] focus:ring-2 focus:ring-[#8fb8aa]/30"
-          value={selectedPeriodId}
-          onChange={(event) => setSelectedPeriodId(event.target.value)}
-        >
-          {periods.map((period) => (
-            <option key={period.id} value={period.id}>
-              {period.label}
-            </option>
-          ))}
-        </select>
+        <div className="relative mt-3">
+          <select
+            id="period"
+            className="w-full appearance-none rounded-full bg-elevated py-3 pl-4 pr-11 text-sm font-medium shadow-soft outline-none transition hover:bg-white focus:ring-2 focus:ring-accent/25"
+            value={selectedPeriodId}
+            onChange={(event) => setSelectedPeriodId(event.target.value)}
+          >
+            {periods.map((period) => (
+              <option key={period.id} value={period.id}>
+                {period.label}
+              </option>
+            ))}
+          </select>
+          <span className="pointer-events-none absolute right-4 top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 border-b-2 border-r-2 border-muted" />
+        </div>
       </section>
 
       <section>
@@ -53,7 +55,7 @@ export function FilterSidebar({ regions }: FilterSidebarProps) {
           <h3 className="text-sm font-semibold">事件类型</h3>
           <button
             type="button"
-            className="text-xs font-medium text-[#5f766f] hover:text-[#314a43]"
+            className="text-xs font-semibold text-accent hover:text-[#d61f45]"
             onClick={clearFilters}
           >
             清空
@@ -67,10 +69,10 @@ export function FilterSidebar({ regions }: FilterSidebarProps) {
                 key={category}
                 type="button"
                 onClick={() => toggleCategory(category)}
-                className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
+                className={`rounded-full px-3 py-2 text-sm font-semibold transition ${
                   active
-                    ? "border-[#3f766d] bg-[#d7eee8] text-[#244c45]"
-                    : "border-[#d6c7aa] bg-white text-[#6d604d] hover:border-[#9fb4ab]"
+                    ? "bg-accent text-white shadow-soft"
+                    : "bg-elevated text-[#484848] shadow-sm hover:bg-surfaceHover"
                 }`}
               >
                 {category}
@@ -80,17 +82,19 @@ export function FilterSidebar({ regions }: FilterSidebarProps) {
         </div>
       </section>
 
-      <div className="rounded-lg border border-[#d6c7aa] bg-white/70 p-4">
-        <p className="text-sm font-semibold">当前显示</p>
-        <p className="mt-1 text-3xl font-bold text-[#385c55]">{regions.length}</p>
-        <p className="text-sm text-[#6d604d]">个历史区域</p>
+      <div className="rounded-lg bg-ink p-4 text-white shadow-panel">
+        <p className="text-sm font-semibold text-white/70">当前显示</p>
+        <p className="mt-1 text-3xl font-semibold">{regions.length}</p>
+        <p className="text-sm text-white/70">个历史区域</p>
       </div>
+
+      <DatabasePreview />
 
       <section>
         <h3 className="text-sm font-semibold">区域列表</h3>
         <div className="mt-3 space-y-2">
           {regions.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-[#d6c7aa] bg-white/70 px-3 py-3 text-sm leading-6 text-[#7a6a50]">
+            <p className="rounded-lg bg-surface px-3 py-3 text-sm leading-6 text-muted shadow-inner">
               这个时间段的数据还没有添加。
             </p>
           ) : (
@@ -101,14 +105,14 @@ export function FilterSidebar({ regions }: FilterSidebarProps) {
                   key={region.id}
                   type="button"
                   onClick={() => setSelectedRegionId(region.id)}
-                  className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left text-sm font-semibold transition ${
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold transition ${
                     active
-                      ? "border-[#3f766d] bg-[#d7eee8] text-[#244c45]"
-                      : "border-[#d6c7aa] bg-white text-[#514838] hover:border-[#9fb4ab]"
+                      ? "bg-ink text-white shadow-soft"
+                      : "bg-elevated text-[#484848] shadow-sm hover:bg-surfaceHover"
                   }`}
                 >
                   <span
-                    className="h-3 w-3 shrink-0 rounded-full border border-black/10"
+                    className="h-3 w-3 shrink-0 rounded-full shadow-sm ring-2 ring-white/70"
                     style={{ background: region.color }}
                   />
                   <span>{region.name}</span>

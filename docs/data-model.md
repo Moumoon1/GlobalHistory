@@ -2,6 +2,23 @@
 
 The app currently uses static TypeScript data, but the shape is designed so it can later be moved into JSON, an API, or a relational database.
 
+The first SQLite schema lives in `database/schema.sql`. Initialize the local database with:
+
+```bash
+npm run db:build
+```
+
+Then import derived learning cards with:
+
+```bash
+npm run db:import:cards
+```
+
+By default this writes:
+
+- `data/generated/history.sqlite`
+- `data/generated/learning-cards.json`
+
 ## Region period profile
 
 A profile represents one modern map area during one time period.

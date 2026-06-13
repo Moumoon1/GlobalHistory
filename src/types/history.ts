@@ -1,6 +1,11 @@
 export type EventCategory =
   | "政治"
   | "战争"
+  | "军事"
+  | "社会"
+  | "经济"
+  | "环境"
+  | "迁徙"
   | "文化"
   | "科技"
   | "宗教"
@@ -19,11 +24,16 @@ export type Period = {
 };
 
 export type HistoryEvent = {
-  year: number;
+  year: number | string;
   title: string;
   category: EventCategory;
   importance: ImportanceLevel;
   description: string;
+  background?: string;
+  process?: string;
+  impact?: string;
+  concepts?: string[];
+  mapNote?: string;
   people?: HistoricalPerson[];
   images?: HistoryImage[];
 };
@@ -37,6 +47,10 @@ export type HistoricalStatus = {
   name: string;
   type: "政权" | "文明圈" | "殖民势力" | "区域势力" | "多政权并存";
   territoryNote: string;
+  relationToModernArea?: "larger" | "smaller" | "similar" | "fragmented" | "unclear";
+  missingFromModernArea?: string;
+  additionalAreas?: string;
+  sourceNote?: string;
   startYear?: number;
   endYear?: number;
 };

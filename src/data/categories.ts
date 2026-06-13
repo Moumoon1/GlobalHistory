@@ -3,6 +3,11 @@ import type { EventCategory } from "../types/history";
 export const eventCategories: EventCategory[] = [
   "政治",
   "战争",
+  "军事",
+  "社会",
+  "经济",
+  "环境",
+  "迁徙",
   "文化",
   "科技",
   "宗教",

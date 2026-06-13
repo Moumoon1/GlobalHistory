@@ -1,4 +1,5 @@
 import type { HistoricalRegion } from "../../types/history";
+import { getLearningRegionsForPeriod } from "../learningRegions";
 import { regions1500To1550 } from "./1500-1550";
 
 const regionsByPeriod: Record<string, HistoricalRegion[]> = {
@@ -6,5 +7,6 @@ const regionsByPeriod: Record<string, HistoricalRegion[]> = {
 };
 
 export function getRegionsForPeriod(periodId: string): HistoricalRegion[] {
-  return regionsByPeriod[periodId] ?? [];
+  const learningRegions = getLearningRegionsForPeriod(periodId);
+  return learningRegions.length > 0 ? learningRegions : regionsByPeriod[periodId] ?? [];
 }

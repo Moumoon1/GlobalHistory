@@ -21,7 +21,10 @@ export const useHistoryStore = create<HistoryState>((set) => ({
   setSelectedPeriodId: (periodId) =>
     set({ selectedPeriodId: periodId, selectedRegionId: null }),
   setSelectedRegionId: (regionId) => set({ selectedRegionId: regionId }),
-  setHoveredRegionId: (regionId) => set({ hoveredRegionId: regionId }),
+  setHoveredRegionId: (regionId) =>
+    set((state) =>
+      state.hoveredRegionId === regionId ? state : { hoveredRegionId: regionId }
+    ),
   toggleCategory: (category) =>
     set((state) => ({
       activeCategories: state.activeCategories.includes(category)

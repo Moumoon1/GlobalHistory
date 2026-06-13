@@ -6,6 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "db:build": "node scripts/build-history-db.mjs",
+    "db:import:cards": "node scripts/import-learning-cards.mjs",
+    "cards:merge:v2": "node scripts/merge-learning-cards.mjs data/generated/learning-cards.json data/curation/global-history-v2-chapter1-2.json ../../outputs/global-history-learning-cards-v2.json",
+    "cards:build:v2": "node scripts/build-v2-learning-cards.mjs",
+    "cards:audit": "node scripts/audit-learning-cards.mjs",
     "preview": "vite preview",
     "lint": "eslint ."
   },
